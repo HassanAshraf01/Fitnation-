@@ -1,0 +1,211 @@
+{% extends 'gymapp/base.html' %}
+{% load static %}
+{% block title %}Home | Gym
+{% endblock %}
+
+{% block content %}
+<style>
+    body
+    {
+        background-color: rgb(3, 83, 86);
+    }
+    h1
+    {
+        font-family:'Poppins', sans-serif;
+        background-color: #0b7496;
+    }
+    .slider
+    {
+        width: 100%;
+        height: 600px;
+        overflow: hidden;
+        position: relative;
+        background-color: rgb(3, 83, 86);
+    }
+    .slides
+    {
+        display: flex;
+        transition: transform 0.5s ease-in-out;
+    }
+    .slides img{
+        width: 100vw;
+        height: 600px;
+        object-fit: contain;
+        flex-shrink: 0;
+
+    }
+    @keyframes slide
+    {
+       0% {transform: translateX(0%);}
+       33% { transform: translateX(-100%);}
+       66% {transform: translateX(-200%);}
+       100%{transform: translateX(0%);}
+    }
+    .card-row
+    {
+        display: flex;
+        justify-content: space-around;
+        flex-wrap: wrap;
+        padding: 30px 0;
+        background-color: #0b7496;
+    }
+    .card-row img
+    {
+        width: 200px;
+        height: 250px; 
+        object-fit: cover;
+        border-radius: 8px;
+        box-shadow: 4 4px 8px rgba(0,0,0,0.2);
+        margin: 10px;
+    }
+    .slider-btn2
+    {
+        position: absolute;
+        top: 50%;
+        left: 20px;
+        transform: translateY(-50%);
+        background-color: aliceblue;
+       border: none;
+       color: black;
+       padding: 10px 15px;
+       font-size: 24px;
+       cursor: pointer;
+       z-index: 10;
+       border-radius: 50% ;
+
+    }
+    .slider-btn
+    {
+       position: absolute;
+       top: 50%;
+       right: 20px;
+       transform: translateY(-50%);
+       background-color: aliceblue;
+       border: none;
+       color: black;
+       padding: 10px 15px;
+       font-size: 24px;
+       cursor: pointer;
+       z-index: 10;
+       border-radius: 50% ;
+    }
+    .slider-btn2:hover
+    {
+        background-color:rgba(31, 14, 167, 0.8); 
+    }
+    .slider-btn:hover{
+        background-color: rgba(31, 14, 167, 0.8);
+    }
+    .btn-section
+    {
+        text-align: center;
+        margin: 40px 0;;
+    }
+    .btn-section button
+    {
+       background-color: gray;
+       font-family:Verdana, Geneva, Tahoma, sans-serif;
+       color:aqua;
+       border: none;
+       padding: 12px 24px;
+       font-size: 18px;
+       margin: 10px;
+       border-radius: 6px;
+       cursor: pointer;
+       transition: background-color 0.3s ease;
+    }
+    .btn-section button:hover
+    {
+        background-color: rgb(68, 67, 67);
+    }
+    #hero h1{
+        border-radius: 10px 10px 10px 10px;
+        font-family:'Times New Roman', Times, serif;
+    }
+    .scrolling-text-wrapper
+    {
+        position: relative;
+        height: 60px;
+        width: 100%;
+        white-space: nowrap;
+        overflow: hidden;
+    }
+    .scrolling-text{
+        display: inline-block;
+     white-space: nowrap;
+     animation: moveText 8s linear infinite;
+     position: absolute;
+    }
+    @keyframes moveText
+    {
+    0% 
+    {
+        transform: translateX(-100%);
+
+
+    }
+    100%
+    {
+     transform: translateX(100%);
+    }
+}
+.scroll-logo
+{
+    width: 60px;
+    height: 1.2em;
+    vertical-align: middle;
+}
+</style>
+ <h1 style="text-align:center">Welcome to Fit Nation</h1>
+
+ <div class="slider">
+    <div class="slides" id="slideContainer">
+        <img src="https://images.unsplash.com/photo-1577221084712-45b0445d2b00?w=700&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTl8fGd5bXxlbnwwfHwwfHx8MA%3D%3D" alt="Gym Image 2">
+        <img src="https://images.unsplash.com/photo-1590487988256-9ed24133863e?w=700&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MjB8fGd5bXxlbnwwfHwwfHx8MA%3D%3D" alt="Gym Image 1">
+        <img src="https://plus.unsplash.com/premium_photo-1661265933107-85a5dbd815af?w=700&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NXx8Z3ltfGVufDB8fDB8fHww" alt="Gym Image 3">
+
+    </div>
+    <button class="slider-btn2" onclick="previousslide()">&#10094;</button>
+    <button class="slider-btn" onclick="nextslide()">&#10095;</button>
+ </div>
+ <div class="hero-section text-white tet-center d-flex flex-column justify-cntent-center align-items-center" id="hero" style="height: 80vh; background:linear-gradient(to right, #000000c9, #000000b3), url('https://images.unsplash.com/photo-1605296867304-46d5465a13f1?auto=format&fit=crop&w=1470&q=80') no-repeat center center/cover">
+     <div class="scrolling-text-wrapper">
+    <h1 class="scrolling-text display-4 fw-bold" style="color:rgb(2, 25, 16); background-color:#f0f7f8">
+        <img src="https://media.istockphoto.com/id/2188968722/vector/fitness-icon-an-d-symbol-vector-template-illustration.jpg?s=612x612&w=0&k=20&c=_Zw7QJ0YCcVqfSQnF8gVIRUfZfW4_TCGzwnp-MGzKnI=" alt="Logo" class="scroll-logo">
+        Transform Your Body,Transform Your Life
+        <img src="https://media.istockphoto.com/id/1531945305/vector/gym-fitness-health-vector-muscle-workout-silhouette-design-fitness-club.jpg?s=612x612&w=0&k=20&c=2-ZlADy3lcSajIjLYKdV4Qi3U3nZ8xUQiPNTn1ZFh5I=" alt="Logo" class="scroll-logo">
+    </h1>
+
+</div>
+    <p class="lead mt-3">Join the best fitness community today</p>
+ </div>
+
+ <div class="card-row">
+    <img src="https://i.pinimg.com/736x/fc/35/aa/fc35aa9d162e8cbc30e0d302e80f80c1.jpg" alt="Yoga">
+    <img src="https://i.pinimg.com/736x/6d/19/f0/6d19f0cd105fa62326f9959df5ac05d7.jpg" alt="Cardio">
+    <img src="https://i.pinimg.com/736x/f9/a7/a3/f9a7a30e3f6cada77cbd30f47f5a430f.jpg" alt="Weights">
+    <img src="https://i.pinimg.com/736x/65/d9/a3/65d9a3a889827197b4930870a4b438c5.jpg" alt="gym Quote">
+ </div>
+ <div class="btn-section">
+    <button>Workout</button>
+    <button>Diet Chart</button>
+    <button>Register as a Member</button>
+ </div>
+ <script>
+    let slideIndex =0;
+    const totalSlides=3;
+    const slides =document.getElementById('slideContainer');
+
+    function nextslide()
+    {
+        slideIndex=(slideIndex+1)%totalSlides;
+        slides.style.transform =`translateX(-${slideIndex *100}vw)`;
+    }
+    function previousslide()
+    {
+        slideIndex=(slideIndex-1+totalSlides)%totalSlides;
+        slides.style.transform =`translateX(-${slideIndex *100}vw)`;
+    }
+
+ </script>
+ {% endblock %}

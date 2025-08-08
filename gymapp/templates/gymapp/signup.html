@@ -1,0 +1,23 @@
+{% extends 'gymapp/base.html'%}
+{% block content %}
+<div class="container mt-5">
+    <h2>Sign Up</h2>
+    {% if messages %}
+    {% for message in messages %}
+    <div id="success-message" class="alert alert-success alert-dismissible fade show" role="alert">{{message}}</div>
+    {% endfor %}
+    {% endif %}
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit" class="btn btn-primary">Create Account</button>
+    </form>
+    {% if redirect %}
+    <script>
+        setTimeout(function(){
+            window.location.href= "{% url 'home' %}";
+        } , 3000)
+    </script>
+    {% endif %}
+</div>
+{% endblock %}
