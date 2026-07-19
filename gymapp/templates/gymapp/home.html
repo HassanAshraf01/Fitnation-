@@ -1,211 +1,711 @@
 {% extends 'gymapp/base.html' %}
 {% load static %}
-{% block title %}Home | Gym
-{% endblock %}
+{% block title %}Home | FitNation{% endblock %}
 
 {% block content %}
+<link href="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.css" rel="stylesheet">
 <style>
-    body
-    {
-        background-color: rgb(3, 83, 86);
+    :root {
+        --neon-cyan: #00f2fe;
+        --neon-blue: #4facfe;
+        --neon-magenta: #ff3366;
+        --neon-yellow: #ffd600;
+        --dark-bg: #070a13;
+        --card-bg: rgba(15, 23, 42, 0.7);
+        --glass-border: rgba(255, 255, 255, 0.08);
+        --text-main: #f8fafc;
+        --text-muted: #94a3b8;
     }
-    h1
-    {
-        font-family:'Poppins', sans-serif;
-        background-color: #0b7496;
+
+    body {
+        background: radial-gradient(circle at top, #111a2e 0%, #070a13 100%) !important;
+        color: var(--text-main);
+        font-family: 'Poppins', sans-serif;
+        overflow-x: hidden;
     }
-    .slider
-    {
+
+    /* Fixed behind all content */
+    #particles-js {
+        position: fixed;
+        top: 0;
+        left: 0;
         width: 100%;
-        height: 600px;
+        height: 100%;
+        z-index: -1;
+        pointer-events: none;
+    }
+
+    /* Hero Carousel / Slider */
+    .slider {
+        width: 100%;
+        height: 80vh;
         overflow: hidden;
         position: relative;
-        background-color: rgb(3, 83, 86);
+        background-color: #020408;
     }
-    .slides
-    {
-        display: flex;
-        transition: transform 0.5s ease-in-out;
-    }
-    .slides img{
-        width: 100vw;
-        height: 600px;
-        object-fit: contain;
-        flex-shrink: 0;
 
-    }
-    @keyframes slide
-    {
-       0% {transform: translateX(0%);}
-       33% { transform: translateX(-100%);}
-       66% {transform: translateX(-200%);}
-       100%{transform: translateX(0%);}
-    }
-    .card-row
-    {
+    .slides {
         display: flex;
-        justify-content: space-around;
-        flex-wrap: wrap;
-        padding: 30px 0;
-        background-color: #0b7496;
+        width: 300vw;
+        height: 100%;
+        transition: transform 0.8s cubic-bezier(0.77, 0, 0.175, 1);
     }
-    .card-row img
-    {
-        width: 200px;
-        height: 250px; 
+
+    .slide-item {
+        width: 100vw;
+        height: 100%;
+        position: relative;
+        flex-shrink: 0;
+    }
+
+    .slide-item img {
+        width: 100%;
+        height: 100%;
         object-fit: cover;
-        border-radius: 8px;
-        box-shadow: 4 4px 8px rgba(0,0,0,0.2);
-        margin: 10px;
+        filter: brightness(0.4) contrast(1.05);
     }
-    .slider-btn2
-    {
+
+    .slider-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: radial-gradient(circle at center, rgba(7, 10, 19, 0.3) 0%, rgba(7, 10, 19, 0.85) 100%);
+        z-index: 2;
+        pointer-events: none;
+    }
+
+    .hero-content {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: 3;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+        padding: 0 1.5rem;
+    }
+
+    .badge-accent {
+        background: rgba(0, 242, 254, 0.1);
+        color: var(--neon-cyan);
+        border: 1px solid rgba(0, 242, 254, 0.3);
+        padding: 6px 16px;
+        border-radius: 50px;
+        font-size: 0.85rem;
+        font-weight: 600;
+        letter-spacing: 2px;
+        text-transform: uppercase;
+        margin-bottom: 1.5rem;
+        box-shadow: 0 0 10px rgba(0, 242, 254, 0.15);
+    }
+
+    .hero-title {
+        font-size: clamp(2rem, 5vw, 3.8rem);
+        font-weight: 800;
+        line-height: 1.15;
+        letter-spacing: -0.5px;
+        text-transform: uppercase;
+        margin-bottom: 1.25rem;
+    }
+
+    .text-glow-cyan {
+        color: var(--neon-cyan);
+        text-shadow: 0 0 15px rgba(0, 242, 254, 0.4);
+    }
+
+    .hero-desc {
+        max-width: 650px;
+        font-size: clamp(0.95rem, 2vw, 1.1rem);
+        color: var(--text-muted);
+        margin-bottom: 2.25rem;
+        line-height: 1.6;
+    }
+
+    .btn-neon {
+        background: linear-gradient(135deg, var(--neon-cyan) 0%, var(--neon-blue) 100%);
+        color: #05080e;
+        font-weight: 600;
+        padding: 12px 30px;
+        border: none;
+        border-radius: 30px;
+        transition: all 0.3s ease;
+        text-decoration: none;
+        display: inline-block;
+        box-shadow: 0 4px 15px rgba(0, 242, 254, 0.3);
+    }
+
+    .btn-neon:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(0, 242, 254, 0.55);
+        color: #05080e;
+    }
+
+    .btn-outline-glass {
+        background: rgba(255, 255, 255, 0.04);
+        color: #fff;
+        font-weight: 500;
+        padding: 12px 30px;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        border-radius: 30px;
+        transition: all 0.3s ease;
+        text-decoration: none;
+        display: inline-block;
+        backdrop-filter: blur(5px);
+    }
+
+    .btn-outline-glass:hover {
+        background: rgba(255, 255, 255, 0.12);
+        border-color: rgba(255, 255, 255, 0.4);
+        color: #fff;
+        transform: translateY(-2px);
+    }
+
+    .slider-arrow {
         position: absolute;
         top: 50%;
-        left: 20px;
         transform: translateY(-50%);
-        background-color: aliceblue;
-       border: none;
-       color: black;
-       padding: 10px 15px;
-       font-size: 24px;
-       cursor: pointer;
-       z-index: 10;
-       border-radius: 50% ;
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(255, 255, 255, 0.15);
+        color: #fff;
+        width: 50px;
+        height: 50px;
+        font-size: 1.25rem;
+        cursor: pointer;
+        z-index: 10;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        backdrop-filter: blur(10px);
+    }
 
+    .slider-arrow:hover {
+        background: var(--neon-cyan);
+        color: #05080e;
+        border-color: var(--neon-cyan);
+        box-shadow: 0 0 15px rgba(0, 242, 254, 0.6);
     }
-    .slider-btn
-    {
-       position: absolute;
-       top: 50%;
-       right: 20px;
-       transform: translateY(-50%);
-       background-color: aliceblue;
-       border: none;
-       color: black;
-       padding: 10px 15px;
-       font-size: 24px;
-       cursor: pointer;
-       z-index: 10;
-       border-radius: 50% ;
+
+    .prev-arrow {
+        left: 25px;
     }
-    .slider-btn2:hover
-    {
-        background-color:rgba(31, 14, 167, 0.8); 
+
+    .next-arrow {
+        right: 25px;
     }
-    .slider-btn:hover{
-        background-color: rgba(31, 14, 167, 0.8);
-    }
-    .btn-section
-    {
-        text-align: center;
-        margin: 40px 0;;
-    }
-    .btn-section button
-    {
-       background-color: gray;
-       font-family:Verdana, Geneva, Tahoma, sans-serif;
-       color:aqua;
-       border: none;
-       padding: 12px 24px;
-       font-size: 18px;
-       margin: 10px;
-       border-radius: 6px;
-       cursor: pointer;
-       transition: background-color 0.3s ease;
-    }
-    .btn-section button:hover
-    {
-        background-color: rgb(68, 67, 67);
-    }
-    #hero h1{
-        border-radius: 10px 10px 10px 10px;
-        font-family:'Times New Roman', Times, serif;
-    }
-    .scrolling-text-wrapper
-    {
-        position: relative;
-        height: 60px;
-        width: 100%;
-        white-space: nowrap;
+
+    /* Scrolling ticker */
+    .ticker-container {
+        background: rgba(7, 10, 19, 0.9);
+        border-top: 1px solid rgba(255, 255, 255, 0.05);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        padding: 12px 0;
         overflow: hidden;
+        white-space: nowrap;
+        position: relative;
+        backdrop-filter: blur(12px);
+        z-index: 4;
     }
-    .scrolling-text{
+
+    .ticker-content {
         display: inline-block;
-     white-space: nowrap;
-     animation: moveText 8s linear infinite;
-     position: absolute;
+        animation: tickerMove 28s linear infinite;
+        font-size: 0.85rem;
+        font-weight: 700;
+        letter-spacing: 3px;
+        color: rgba(255, 255, 255, 0.55);
     }
-    @keyframes moveText
-    {
-    0% 
-    {
-        transform: translateX(-100%);
 
+    .ticker-span {
+        margin-right: 60px;
+    }
 
+    .ticker-highlight {
+        color: var(--neon-cyan);
+        text-shadow: 0 0 8px rgba(0, 242, 254, 0.45);
+        margin-right: 5px;
     }
-    100%
-    {
-     transform: translateX(100%);
+
+    @keyframes tickerMove {
+        0% {
+            transform: translateX(0);
+        }
+
+        100% {
+            transform: translateX(-50%);
+        }
     }
-}
-.scroll-logo
-{
-    width: 60px;
-    height: 1.2em;
-    vertical-align: middle;
-}
+
+    /* Program Section styles */
+    .section-title {
+        font-weight: 800;
+        letter-spacing: 1px;
+        background: linear-gradient(135deg, #ffffff 0%, #a1a1a1 100%);
+        -webkit-background-clip: text;
+        background-clip: text;
+        -webkit-text-fill-color: transparent;
+        text-transform: uppercase;
+        font-size: 2.25rem;
+    }
+
+    .section-subtitle {
+        color: var(--text-muted);
+        font-weight: 400;
+        font-size: 0.95rem;
+    }
+
+    .program-card {
+        background: var(--card-bg);
+        border: 1px solid var(--glass-border);
+        border-radius: 20px;
+        overflow: hidden;
+        transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        backdrop-filter: blur(15px);
+    }
+
+    .program-img-wrapper {
+        position: relative;
+        overflow: hidden;
+        aspect-ratio: 4/5;
+    }
+
+    .program-card img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform 0.6s cubic-bezier(0.165, 0.84, 0.44, 1);
+    }
+
+    .program-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(to bottom, rgba(7, 10, 19, 0) 35%, rgba(7, 10, 19, 0.95) 100%);
+    }
+
+    .program-info {
+        padding: 1.5rem;
+        text-align: left;
+        position: relative;
+        z-index: 2;
+        margin-top: -65px;
+    }
+
+    .program-info h3 {
+        font-size: 1.25rem;
+        font-weight: 700;
+        color: var(--neon-cyan);
+        margin-bottom: 0.5rem;
+    }
+
+    .program-info p {
+        font-size: 0.88rem;
+        color: var(--text-muted);
+        margin-bottom: 0;
+        line-height: 1.5;
+    }
+
+    .program-card:hover {
+        transform: translateY(-8px);
+        border-color: rgba(0, 242, 254, 0.35);
+        box-shadow: 0 12px 30px rgba(0, 242, 254, 0.15);
+    }
+
+    .program-card:hover img {
+        transform: scale(1.06);
+    }
+
+    /* Action Hub cards */
+    .hub-card {
+        background: var(--card-bg);
+        border: 1px solid var(--glass-border);
+        border-radius: 20px;
+        padding: 3rem 2rem;
+        transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        backdrop-filter: blur(15px);
+    }
+
+    .hub-icon-wrapper {
+        font-size: 2.75rem;
+        width: 85px;
+        height: 85px;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.02);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 1.75rem;
+        transition: all 0.4s ease;
+        border: 1px solid rgba(255, 255, 255, 0.04);
+    }
+
+    .text-cyan {
+        color: var(--neon-cyan);
+        box-shadow: inset 0 0 20px rgba(0, 242, 254, 0.08);
+    }
+
+    .text-magenta {
+        color: var(--neon-magenta);
+        box-shadow: inset 0 0 20px rgba(255, 51, 102, 0.08);
+    }
+
+    .text-yellow {
+        color: var(--neon-yellow);
+        box-shadow: inset 0 0 20px rgba(255, 214, 0, 0.08);
+    }
+
+    .hub-title {
+        font-size: 1.4rem;
+        font-weight: 700;
+        color: #fff;
+        margin-bottom: 0.85rem;
+    }
+
+    .hub-desc {
+        font-size: 0.92rem;
+        line-height: 1.6;
+        margin-bottom: 2.25rem;
+        color: var(--text-muted);
+        flex-grow: 1;
+    }
+
+    .btn-hub {
+        width: 100%;
+        padding: 12px 24px;
+        font-weight: 600;
+        border-radius: 10px;
+        transition: all 0.3s ease;
+        text-decoration: none;
+        display: inline-block;
+        border: 1px solid transparent;
+        text-align: center;
+    }
+
+    .btn-hub-cyan {
+        background: rgba(0, 242, 254, 0.06);
+        color: var(--neon-cyan);
+        border-color: rgba(0, 242, 254, 0.25);
+    }
+
+    .btn-hub-cyan:hover {
+        background: var(--neon-cyan);
+        color: #05080e;
+        box-shadow: 0 5px 15px rgba(0, 242, 254, 0.35);
+    }
+
+    .btn-hub-magenta {
+        background: rgba(255, 51, 102, 0.06);
+        color: var(--neon-magenta);
+        border-color: rgba(255, 51, 102, 0.25);
+    }
+
+    .btn-hub-magenta:hover {
+        background: var(--neon-magenta);
+        color: #fff;
+        box-shadow: 0 5px 15px rgba(255, 51, 102, 0.35);
+    }
+
+    .btn-hub-yellow {
+        background: rgba(255, 214, 0, 0.06);
+        color: var(--neon-yellow);
+        border-color: rgba(255, 214, 0, 0.25);
+    }
+
+    .btn-hub-yellow:hover {
+        background: var(--neon-yellow);
+        color: #05080e;
+        box-shadow: 0 5px 15px rgba(255, 214, 0, 0.35);
+    }
+
+    .hub-card:hover {
+        transform: translateY(-8px);
+        border-color: rgba(255, 255, 255, 0.14);
+        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.35);
+    }
+
+    .hub-card:hover .hub-icon-wrapper {
+        transform: scale(1.08);
+    }
 </style>
- <h1 style="text-align:center">Welcome to Fit Nation</h1>
 
- <div class="slider">
+<div class="slider">
+    <!-- Slides Background -->
     <div class="slides" id="slideContainer">
-        <img src="https://images.unsplash.com/photo-1577221084712-45b0445d2b00?w=700&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTl8fGd5bXxlbnwwfHwwfHx8MA%3D%3D" alt="Gym Image 2">
-        <img src="https://images.unsplash.com/photo-1590487988256-9ed24133863e?w=700&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MjB8fGd5bXxlbnwwfHwwfHx8MA%3D%3D" alt="Gym Image 1">
-        <img src="https://plus.unsplash.com/premium_photo-1661265933107-85a5dbd815af?w=700&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NXx8Z3ltfGVufDB8fDB8fHww" alt="Gym Image 3">
-
+        <div class="slide-item">
+            <img src="https://images.unsplash.com/photo-1577221084712-45b0445d2b00?auto=format&fit=crop&w=1600&q=80"
+                alt="Gym Core">
+        </div>
+        <div class="slide-item">
+            <img src="https://images.unsplash.com/photo-1590487988256-9ed24133863e?auto=format&fit=crop&w=1600&q=80"
+                alt="Cardio Arena">
+        </div>
+        <div class="slide-item">
+            <img src="https://images.unsplash.com/photo-1605296867304-46d5465a13f1?auto=format&fit=crop&w=1600&q=80"
+                alt="Weight Training">
+        </div>
     </div>
-    <button class="slider-btn2" onclick="previousslide()">&#10094;</button>
-    <button class="slider-btn" onclick="nextslide()">&#10095;</button>
- </div>
- <div class="hero-section text-white tet-center d-flex flex-column justify-cntent-center align-items-center" id="hero" style="height: 80vh; background:linear-gradient(to right, #000000c9, #000000b3), url('https://images.unsplash.com/photo-1605296867304-46d5465a13f1?auto=format&fit=crop&w=1470&q=80') no-repeat center center/cover">
-     <div class="scrolling-text-wrapper">
-    <h1 class="scrolling-text display-4 fw-bold" style="color:rgb(2, 25, 16); background-color:#f0f7f8">
-        <img src="https://media.istockphoto.com/id/2188968722/vector/fitness-icon-an-d-symbol-vector-template-illustration.jpg?s=612x612&w=0&k=20&c=_Zw7QJ0YCcVqfSQnF8gVIRUfZfW4_TCGzwnp-MGzKnI=" alt="Logo" class="scroll-logo">
-        Transform Your Body,Transform Your Life
-        <img src="https://media.istockphoto.com/id/1531945305/vector/gym-fitness-health-vector-muscle-workout-silhouette-design-fitness-club.jpg?s=612x612&w=0&k=20&c=2-ZlADy3lcSajIjLYKdV4Qi3U3nZ8xUQiPNTn1ZFh5I=" alt="Logo" class="scroll-logo">
-    </h1>
 
+    <!-- Dark gradient overlay for text readability -->
+    <div class="slider-overlay"></div>
+
+    <!-- Static Hero Content Overlay -->
+    <div class="hero-content">
+        <span class="badge-accent" data-aos="fade-down">Welcome to Fit Nation</span>
+        <h1 class="hero-title text-white" data-aos="fade-up" data-aos-delay="200">
+            Transform Your Body<br><span class="text-glow-cyan">Transform Your Life</span>
+        </h1>
+        <p class="hero-desc" data-aos="fade-up" data-aos-delay="400">
+            Join the ultimate fitness community today. Access high-quality workouts, personalized nutrition guides, and
+            certified expert support to reach your peak.
+        </p>
+        <div class="hero-buttons mt-1" data-aos="fade-up" data-aos-delay="600">
+            <a href="{% url 'register_member' %}" class="btn-neon">Register Member</a>
+            {% if user.is_authenticated and plan_exists %}
+            <a href="{% url 'my_plans' %}?show=workouts" class="btn-outline-glass ms-3">Explore Workouts</a>
+            {% else %}
+            <a href="{% url 'register_member' %}" class="btn-outline-glass ms-3">Explore Workouts</a>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Navigation Arrows -->
+    <button class="slider-arrow prev-arrow" onclick="previousslide()">&#10094;</button>
+    <button class="slider-arrow next-arrow" onclick="nextslide()">&#10095;</button>
 </div>
-    <p class="lead mt-3">Join the best fitness community today</p>
- </div>
 
- <div class="card-row">
-    <img src="https://i.pinimg.com/736x/fc/35/aa/fc35aa9d162e8cbc30e0d302e80f80c1.jpg" alt="Yoga">
-    <img src="https://i.pinimg.com/736x/6d/19/f0/6d19f0cd105fa62326f9959df5ac05d7.jpg" alt="Cardio">
-    <img src="https://i.pinimg.com/736x/f9/a7/a3/f9a7a30e3f6cada77cbd30f47f5a430f.jpg" alt="Weights">
-    <img src="https://i.pinimg.com/736x/65/d9/a3/65d9a3a889827197b4930870a4b438c5.jpg" alt="gym Quote">
- </div>
- <div class="btn-section">
-    <button>Workout</button>
-    <button>Diet Chart</button>
-    <button>Register as a Member</button>
- </div>
- <script>
-    let slideIndex =0;
-    const totalSlides=3;
-    const slides =document.getElementById('slideContainer');
+<!-- Modern scrolling features ticker bar -->
+<div class="ticker-container">
+    <div class="ticker-content">
+        <span class="ticker-span"><span class="ticker-highlight">★</span> STRENGTH & STAMINA</span>
+        <span class="ticker-span"><span class="ticker-highlight">★</span> CARDIO BURN</span>
+        <span class="ticker-span"><span class="ticker-highlight">★</span> YOGA & MINDFULNESS</span>
+        <span class="ticker-span"><span class="ticker-highlight">★</span> WEIGHT TRAINING</span>
+        <span class="ticker-span"><span class="ticker-highlight">★</span> PERSONAL COACHING</span>
+        <span class="ticker-span"><span class="ticker-highlight">★</span> 24/7 MEMBERSHIP</span>
+        <span class="ticker-span"><span class="ticker-highlight">★</span> DIET & NUTRITION</span>
+        <!-- Duplicate for smooth infinite scrolling loop -->
+        <span class="ticker-span"><span class="ticker-highlight">★</span> STRENGTH & STAMINA</span>
+        <span class="ticker-span"><span class="ticker-highlight">★</span> CARDIO BURN</span>
+        <span class="ticker-span"><span class="ticker-highlight">★</span> YOGA & MINDFULNESS</span>
+        <span class="ticker-span"><span class="ticker-highlight">★</span> WEIGHT TRAINING</span>
+        <span class="ticker-span"><span class="ticker-highlight">★</span> PERSONAL COACHING</span>
+        <span class="ticker-span"><span class="ticker-highlight">★</span> 24/7 MEMBERSHIP</span>
+        <span class="ticker-span"><span class="ticker-highlight">★</span> DIET & NUTRITION</span>
+    </div>
+</div>
 
-    function nextslide()
-    {
-        slideIndex=(slideIndex+1)%totalSlides;
-        slides.style.transform =`translateX(-${slideIndex *100}vw)`;
+<!-- Programs Grid Section -->
+<section class="programs-section py-5 my-4">
+    <div class="container text-center">
+        <h2 class="section-title mb-2" data-aos="fade-up">Explore Programs</h2>
+        <p class="section-subtitle mb-5" data-aos="fade-up" data-aos-delay="100">Tailored training models targeting your
+            unique physical goals</p>
+
+        <div class="row g-4">
+            <!-- Yoga Card -->
+            <div class="col-lg-3 col-md-6" data-aos="fade-up" data-aos-delay="200">
+                <div class="program-card">
+                    <div class="program-img-wrapper">
+                        <img src="https://i.pinimg.com/736x/fc/35/aa/fc35aa9d162e8cbc30e0d302e80f80c1.jpg" alt="Yoga">
+                        <div class="program-overlay"></div>
+                    </div>
+                    <div class="program-info">
+                        <h3>Yoga Zen</h3>
+                        <p>Enhance flexibility, core posture, and stress relief.</p>
+                    </div>
+                </div>
+            </div>
+            <!-- Cardio Card -->
+            <div class="col-lg-3 col-md-6" data-aos="fade-up" data-aos-delay="300">
+                <div class="program-card">
+                    <div class="program-img-wrapper">
+                        <img src="https://i.pinimg.com/736x/6d/19/f0/6d19f0cd105fa62326f9959df5ac05d7.jpg" alt="Cardio">
+                        <div class="program-overlay"></div>
+                    </div>
+                    <div class="program-info">
+                        <h3>Cardio Burn</h3>
+                        <p>Boost your cardiovascular capacity and metabolism.</p>
+                    </div>
+                </div>
+            </div>
+            <!-- Weights Card -->
+            <div class="col-lg-3 col-md-6" data-aos="fade-up" data-aos-delay="400">
+                <div class="program-card">
+                    <div class="program-img-wrapper">
+                        <img src="https://i.pinimg.com/736x/f9/a7/a3/f9a7a30e3f6cada77cbd30f47f5a430f.jpg"
+                            alt="Weights">
+                        <div class="program-overlay"></div>
+                    </div>
+                    <div class="program-info">
+                        <h3>Power Lifting</h3>
+                        <p>Build solid hypertrophy, density, and sheer power.</p>
+                    </div>
+                </div>
+            </div>
+            <!-- Motivation Card -->
+            <div class="col-lg-3 col-md-6" data-aos="fade-up" data-aos-delay="500">
+                <div class="program-card">
+                    <div class="program-img-wrapper">
+                        <img src="https://i.pinimg.com/736x/65/d9/a3/65d9a3a889827197b4930870a4b438c5.jpg"
+                            alt="Motivation">
+                        <div class="program-overlay"></div>
+                    </div>
+                    <div class="program-info">
+                        <h3>Daily Motivation</h3>
+                        <p>Receive mental drive and fitness quotes to stay active.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Action Hub Section -->
+<section class="action-hub-section py-5 my-4">
+    <div class="container text-center">
+        <h2 class="section-title mb-2" data-aos="fade-up">Interactive Action Hub</h2>
+        <p class="section-subtitle mb-5" data-aos="fade-up" data-aos-delay="100">Ready to unlock your potential? Explore
+            features below.</p>
+
+        <div class="row g-4 justify-content-center">
+            <!-- Workout Hub Card -->
+            <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="200">
+                <div class="hub-card">
+                    <div class="hub-icon-wrapper text-cyan">
+                        <i class="fa-solid fa-dumbbell"></i>
+                    </div>
+                    <h3 class="hub-title">Workout Library</h3>
+                    <p class="hub-desc">Dive into categorized workout videos covering back, chest, legs, shoulders,
+                        arms, and core exercises.</p>
+                    {% if user.is_authenticated and plan_exists %}
+                    <a href="{% url 'my_plans' %}?show=workouts" class="btn-hub btn-hub-cyan">Explore Actions</a>
+                    {% else %}
+                    <a href="{% url 'register_member' %}" class="btn-hub btn-hub-cyan">Explore Actions</a>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Diet/Meal Prep Hub Card -->
+            <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="300">
+                <div class="hub-card">
+                    <div class="hub-icon-wrapper text-magenta">
+                        <i class="fa-solid fa-utensils"></i>
+                    </div>
+                    <h3 class="hub-title">Diet Planner</h3>
+                    <p class="hub-desc">Get professional meal splits and workout nutrition charts to compound your
+                        physiological performance gains.</p>
+                    {% if user.is_authenticated and plan_exists %}
+                    <a href="{% url 'my_plans' %}?show=diet" class="btn-hub btn-hub-magenta">View Diet Charts</a>
+                    {% else %}
+                    <a href="{% url 'register_member' %}" class="btn-hub btn-hub-magenta">View Diet Charts</a>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Registration Hub Card -->
+            <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="400">
+                <div class="hub-card">
+                    <div class="hub-icon-wrapper text-yellow">
+                        <i class="fa-solid fa-id-card"></i>
+                    </div>
+                    <h3 class="hub-title">Become a Member</h3>
+                    <p class="hub-desc">Configure your personal physical profiles, select subscription lengths, and
+                        register your program logs.</p>
+                    <a href="{% url 'register_member' %}" class="btn-hub btn-hub-yellow">Register Member</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Particles JS & Slider Handler -->
+<script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        // Initialize particles background linked from base.html
+        particlesJS('particles-js', {
+            "particles": {
+                "number": {
+                    "value": 90,
+                    "density": { "enable": true, "value_area": 900 }
+                },
+                "color": { "value": "#00f2fe" },
+                "shape": { "type": "circle" },
+                "opacity": { "value": 0.5, "random": true },
+                "size": { "value": 2.5, "random": true },
+                "line_linked": {
+                    "enable": true,
+                    "distance": 180,
+                    "color": "#00f2fe",
+                    "opacity": 0.25,
+                    "width": 1
+                },
+                "move": {
+                    "enable": true,
+                    "speed": 1.6,
+                    "direction": "none",
+                    "random": true,
+                    "straight": false,
+                    "out_mode": "out"
+                }
+            },
+            "interactivity": {
+                "detect_on": "canvas",
+                "events": {
+                    "onhover": { "enable": true, "mode": "repulse" },
+                    "onclick": { "enable": false }
+                },
+                "modes": {
+                    "repulse": { "distance": 120, "duration": 0.1 }
+                }
+            },
+            "retina_detect": true
+        });
+    });
+
+    let slideIndex = 0;
+    const totalSlides = 3;
+    const slides = document.getElementById('slideContainer');
+
+    // Auto-slide interval
+    let autoSlideInterval = setInterval(nextslide, 6000);
+
+    function resetAutoSlideTimer() {
+        clearInterval(autoSlideInterval);
+        autoSlideInterval = setInterval(nextslide, 6000);
     }
-    function previousslide()
-    {
-        slideIndex=(slideIndex-1+totalSlides)%totalSlides;
-        slides.style.transform =`translateX(-${slideIndex *100}vw)`;
+
+    function nextslide() {
+        slideIndex = (slideIndex + 1) % totalSlides;
+        if (slides) {
+            slides.style.transform = `translateX(-${slideIndex * 100}vw)`;
+        }
+        resetAutoSlideTimer();
     }
 
- </script>
- {% endblock %}
+    function previousslide() {
+        slideIndex = (slideIndex - 1 + totalSlides) % totalSlides;
+        if (slides) {
+            slides.style.transform = `translateX(-${slideIndex * 100}vw)`;
+        }
+        resetAutoSlideTimer();
+    }
+</script>
+{% endblock %}

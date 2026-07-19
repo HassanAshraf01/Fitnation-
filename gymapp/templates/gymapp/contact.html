@@ -1,55 +1,270 @@
 {% extends 'gymapp/base.html' %}
-
-{% block title %}Contact | Gym{% endblock %}
- {% block content %}
- <style>
-
-  body{
-    background-color: #1c1c1c;
-    color: antiquewhite;
-    background: url('https://images.unsplash.com/photo-1507398941214-572c25f4b1dc?q=80&w=773&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D')no-repeat center center/cover;
+{% block title %}Contact | FitNation{% endblock %}
+{% block content %}
+<style>
+  :root {
+    --neon-cyan: #00f2fe;
+    --neon-blue: #4facfe;
+    --neon-magenta: #ff3366;
+    --neon-yellow: #ffd600;
+    --dark-bg: #070a13;
+    --card-bg: rgba(15, 23, 42, 0.75);
+    --glass-border: rgba(255, 255, 255, 0.08);
+    --text-main: #f8fafc;
+    --text-muted: #94a3b8;
   }
-  .contact-box
-  {
-    background-color: #2b2b2b;
-    padding: 30px;
+
+  body {
+    background: linear-gradient(rgba(7, 10, 19, 0.8), rgba(7, 10, 19, 0.95)),
+      url('https://images.unsplash.com/photo-1507398941214-572c25f4b1dc?q=80&w=773&auto=format&fit=crop') no-repeat center center/cover !important;
+    color: var(--text-main);
+    font-family: 'Poppins', sans-serif;
+    min-height: 100vh;
+    overflow-y: auto;
+  }
+
+  .section-title {
+    font-weight: 800;
+    letter-spacing: 1px;
+    background: linear-gradient(135deg, #ffffff 0%, #a1a1a1 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    text-transform: uppercase;
+    font-size: 2.25rem;
+  }
+
+  .section-subtitle {
+    color: var(--text-muted);
+    font-size: 1rem;
+  }
+
+  /* Cards containers */
+  .contact-box,
+  .info-box {
+    background: var(--card-bg);
+    border: 1px solid var(--glass-border);
+    padding: 3rem 2.5rem;
+    border-radius: 20px;
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.35);
+    backdrop-filter: blur(15px);
+    -webkit-backdrop-filter: blur(15px);
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .info-title {
+    font-weight: 800;
+    letter-spacing: 0.5px;
+    color: #fff;
+    margin-bottom: 1rem;
+  }
+
+  /* Details rows */
+  .info-item {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid var(--glass-border);
+    border-radius: 12px;
+    padding: 1.25rem 1.5rem;
+    transition: all 0.3s ease;
+    margin-bottom: 1.25rem;
+  }
+
+  .info-item:hover {
+    transform: translateX(5px);
+    border-color: rgba(255, 255, 255, 0.15);
+  }
+
+  .info-icon {
+    font-size: 1.3rem;
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    flex-shrink: 0;
+  }
+
+  .text-cyan {
+    color: var(--neon-cyan);
+    box-shadow: inset 0 0 15px rgba(0, 242, 254, 0.06);
+  }
+
+  .text-magenta {
+    color: var(--neon-magenta);
+    box-shadow: inset 0 0 15px rgba(255, 51, 102, 0.06);
+  }
+
+  .text-yellow {
+    color: var(--neon-yellow);
+    box-shadow: inset 0 0 15px rgba(255, 214, 0, 0.06);
+  }
+
+  .info-item h4 {
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: #fff;
+    margin-bottom: 0.2rem;
+  }
+
+  .info-item span {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+  }
+
+  /* Social networks */
+  .social-links a {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid var(--glass-border);
+    color: #fff;
+    font-size: 1.1rem;
+    margin-right: 12px;
+    transition: all 0.3s ease;
+    text-decoration: none;
+  }
+
+  .social-links a:hover {
+    background: var(--neon-cyan);
+    color: #05080e;
+    transform: translateY(-3px);
+    box-shadow: 0 5px 15px rgba(0, 242, 254, 0.4);
+  }
+
+  /* Form specific styles */
+  .form-label {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 0.5rem;
+  }
+
+  .contact-box input,
+  .contact-box textarea {
+    background: rgba(255, 255, 255, 0.03) !important;
+    border: 1px solid var(--glass-border) !important;
+    color: #fff !important;
     border-radius: 10px;
-    box-shadow: 0 0 15px rgba(0,0,0,0.6);
+    transition: all 0.3s ease;
+    padding: 12px 16px;
   }
-  .btn-gym
-  {
-    background-color: #e63946;
-    color: white;
+
+  .contact-box input:focus,
+  .contact-box textarea:focus {
+    outline: none;
+    border-color: var(--neon-cyan) !important;
+    box-shadow: 0 0 12px rgba(0, 242, 254, 0.25) !important;
+    background: rgba(255, 255, 255, 0.06) !important;
+  }
+
+  .btn-submit-neon {
+    background: linear-gradient(135deg, var(--neon-cyan) 0%, var(--neon-blue) 100%);
+    color: #05080e;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    padding: 12px;
     border: none;
+    border-radius: 10px;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(0, 242, 254, 0.25);
   }
-  .btn-gym:hover{
-    background-color: #c92734;
+
+  .btn-submit-neon:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 22px rgba(0, 242, 254, 0.5);
+    color: #05080e;
   }
- </style>
- <div class="container py-5">
-   <h2  class="text-center mb-4">Contact Us</h2>
+</style>
+
+<div class="container py-5 my-4">
+  <!-- Header -->
+  <div class="text-center mb-5">
+    <h2 class="section-title mb-2" data-aos="fade-up">Contact Us</h2>
+    <p class="section-subtitle" data-aos="fade-up" data-aos-delay="100">Get in touch with our online coaching and
+      support team</p>
+  </div>
+
+  <!-- Alert Messages -->
   {% if messages %}
   {% for message in messages %}
-   <div id="success-message" class="alert alert-success alert-dismissible fade show" role="alert">
+  <div id="success-message"
+    class="alert alert-success border-0 text-white bg-success bg-opacity-25 alert-dismissible fade show mb-4"
+    role="alert" data-aos="fade-up">
     {{ message }}
-   </div>
-   {% endfor %}
-   {% endif %}
-   <div class="row justify-content-center">
-   <div class="col-md-6 contact-box">
-    <form method="POST" autocomplete="off">
-       {% csrf_token %}
-       <div class="mb-3">
-        <label class="form-label">Name:</label>
-        <input type="text" name="name" required class="form-control" style="background-color:aquamarine;">
-       </div>
-       <div class="mb-3">
-         <label class="form-label">Your Message:-</label>
-          <textarea name="message" rows="4" required class="form-control" style="background-color:aquamarine;"></textarea>
-       </div>
-       <button type="submit" class="btn btn-gym w-100">Submit</button>
-      </form>
-   </div>
-   </div>
   </div>
- {% endblock %}
+  {% endfor %}
+  {% endif %}
+
+  <!-- 2-Column responsive layout -->
+  <div class="row g-5 align-items-stretch">
+    <!-- Left Column: Location and Contact Info -->
+    <div class="col-lg-5" data-aos="fade-right" data-aos-delay="200">
+      <div class="info-box">
+        <div class="flex-grow-1">
+          <h3 class="info-title">Support Hub</h3>
+          <p class="text-white-50 mb-4">Have questions about calculators, workout routines, or meal preps? Reach out
+            directly and we will help you optimize your tracking.</p>
+          <div class="info-item">
+            <div class="info-icon text-magenta"><i class="fa-solid fa-phone"></i></div>
+            <div>
+              <h4>Telephone Hotline</h4>
+              <span>+1 (800) 348-6284</span>
+            </div>
+          </div>
+          <div class="info-item">
+            <div class="info-icon text-yellow"><i class="fa-solid fa-envelope"></i></div>
+            <div>
+              <h4>Email Support</h4>
+              <span>support@fitnation.hub</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="social-links mt-4 pt-4 border-top border-secondary border-opacity-25">
+          <a href="#" title="Facebook"><i class="fa-brands fa-facebook-f"></i></a>
+          <a href="#" title="X"><i class="fa-brands fa-x-twitter"></i></a>
+          <a href="#" title="Instagram"><i class="fa-brands fa-instagram"></i></a>
+          <a href="#" title="YouTube"><i class="fa-brands fa-youtube"></i></a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Right Column: Interactive Form -->
+    <div class="col-lg-7" data-aos="fade-left" data-aos-delay="300">
+      <div class="contact-box">
+        <h3 class="info-title mb-4">Send a Message</h3>
+        <form method="POST" autocomplete="off">
+          {% csrf_token %}
+          <div class="mb-4">
+            <label class="form-label">Name</label>
+            <input type="text" name="name" required class="form-control" placeholder="Enter your full name">
+          </div>
+
+          <div class="mb-4">
+            <label class="form-label">Your Message</label>
+            <textarea name="message" rows="5" required class="form-control"
+              placeholder="Write down your queries or feedback..."></textarea>
+          </div>
+
+          <button type="submit" class="btn-submit-neon w-100">Submit Message</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

@@ -1,23 +1,220 @@
-{% extends 'gymapp/base.html'%}
+{% extends 'gymapp/base.html' %}
+{% block title %}Sign Up | Gym{% endblock %}
 {% block content %}
-<div class="container mt-5">
-    <h2>Sign Up</h2>
-    {% if messages %}
-    {% for message in messages %}
-    <div id="success-message" class="alert alert-success alert-dismissible fade show" role="alert">{{message}}</div>
-    {% endfor %}
-    {% endif %}
-    <form method="post">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit" class="btn btn-primary">Create Account</button>
-    </form>
-    {% if redirect %}
-    <script>
-        setTimeout(function(){
-            window.location.href= "{% url 'home' %}";
-        } , 3000)
-    </script>
-    {% endif %}
+<style>
+    :root {
+        --neon-cyan: #00f2fe;
+        --neon-blue: #4facfe;
+        --dark-bg: #070a13;
+        --card-bg: rgba(15, 23, 42, 0.75);
+        --glass-border: rgba(255, 255, 255, 0.08);
+        --text-main: #f8fafc;
+        --text-muted: #94a3b8;
+    }
+
+    body {
+        background: radial-gradient(circle at top, #111a2e 0%, #070a13 100%) !important;
+        color: var(--text-main);
+        font-family: 'Poppins', sans-serif;
+        min-height: 100vh;
+        overflow-y: auto;
+    }
+
+    #particles-js {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: -1;
+        pointer-events: none;
+    }
+
+    .form-wrapper {
+        background: var(--card-bg);
+        border: 1px solid var(--glass-border);
+        padding: 3rem 2.5rem;
+        border-radius: 20px;
+        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.35);
+        max-width: 500px;
+        width: 100%;
+        margin: auto;
+        backdrop-filter: blur(15px);
+        -webkit-backdrop-filter: blur(15px);
+        z-index: 5;
+        position: relative;
+    }
+
+    .form-wrapper h2 {
+        font-weight: 800;
+        letter-spacing: 1px;
+        background: linear-gradient(135deg, #ffffff 0%, #a1a1a1 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        text-transform: uppercase;
+        margin-bottom: 2rem !important;
+    }
+
+    /* Style django form paragraphs, labels, and inputs */
+    .form-wrapper p {
+        margin-bottom: 1.5rem;
+    }
+
+    .form-wrapper label {
+        display: block;
+        font-size: 0.85rem;
+        font-weight: 600;
+        color: var(--text-muted);
+        margin-bottom: 0.5rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .form-wrapper input {
+        width: 100%;
+        padding: 12px 16px;
+        background: rgba(255, 255, 255, 0.03);
+        border: 1px solid var(--glass-border);
+        border-radius: 10px;
+        color: #fff;
+        font-size: 0.95rem;
+        transition: all 0.3s ease;
+    }
+
+    .form-wrapper input:focus {
+        outline: none;
+        border-color: var(--neon-cyan);
+        box-shadow: 0 0 12px rgba(0, 242, 254, 0.25);
+        background: rgba(255, 255, 255, 0.06);
+    }
+
+    /* Help text style from django forms */
+    .form-wrapper .helptext {
+        display: block;
+        font-size: 0.75rem;
+        color: var(--text-muted);
+        margin-top: 0.25rem;
+        line-height: 1.4;
+    }
+
+    .btn-submit-neon {
+        background: linear-gradient(135deg, var(--neon-cyan) 0%, var(--neon-blue) 100%);
+        color: #05080e;
+        font-weight: 700;
+        letter-spacing: 1px;
+        text-transform: uppercase;
+        padding: 12px;
+        border: none;
+        border-radius: 10px;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 15px rgba(0, 242, 254, 0.25);
+    }
+
+    .btn-submit-neon:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 22px rgba(0, 242, 254, 0.5);
+        color: #05080e;
+    }
+
+    .form-wrapper p a {
+        color: var(--neon-cyan);
+        text-decoration: none;
+        font-weight: 500;
+        transition: all 0.3s ease;
+    }
+
+    .form-wrapper p a:hover {
+        color: #fff;
+        text-shadow: 0 0 8px rgba(0, 242, 254, 0.5);
+    }
+
+    .form-links {
+        font-size: 0.9rem;
+        margin-top: 1.5rem;
+    }
+
+    /* Form errors styling */
+    .errorlist {
+        list-style-type: none;
+        padding-left: 0;
+        color: #ff3366;
+        font-size: 0.8rem;
+        margin-top: 0.25rem;
+        margin-bottom: 0px;
+    }
+</style>
+
+<div class="container d-flex justify-content-center align-items-center" style="min-height: 80vh; padding: 3rem 1rem;">
+    <div class="form-wrapper" data-aos="fade-up">
+        <h2 class="text-center">Sign Up</h2>
+
+        {% if messages %}
+        {% for message in messages %}
+        <div id="success-message"
+            class="alert alert-success border-0 text-white bg-success bg-opacity-25 alert-dismissible fade show"
+            role="alert">
+            {{ message }}
+        </div>
+        {% endfor %}
+        {% endif %}
+
+        <form method="post">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <div class="d-grid mt-4">
+                <button type="submit" class="btn-submit-neon">Create Account</button>
+            </div>
+        </form>
+
+        <div class="form-links text-center border-top border-secondary pt-3 mt-4">
+            <p class="mb-0 text-white-50">Already have an account? <a href="{% url 'login' %}">Login</a></p>
+        </div>
+    </div>
 </div>
+
+{% if redirect %}
+<script>
+    setTimeout(function () {
+        window.location.href = "{% url 'home' %}";
+    }, 3000)
+</script>
+{% endif %}
+
+<script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        particlesJS('particles-js', {
+            "particles": {
+                "number": { "value": 80, "density": { "enable": true, "value_area": 800 } },
+                "color": { "value": "#00f2fe" },
+                "shape": { "type": "circle" },
+                "opacity": { "value": 0.5, "random": true },
+                "size": { "value": 2.5, "random": true },
+                "line_linked": {
+                    "enable": true,
+                    "distance": 180,
+                    "color": "#00f2fe",
+                    "opacity": 0.25,
+                    "width": 1
+                },
+                "move": {
+                    "enable": true,
+                    "speed": 1.6,
+                    "random": true,
+                    "straight": false,
+                    "out_mode": "out"
+                }
+            },
+            "interactivity": {
+                "detect_on": "canvas",
+                "events": {
+                    "onhover": { "enable": true, "mode": "repulse" },
+                    "onclick": { "enable": false }
+                },
+                "modes": { "repulse": { "distance": 120, "duration": 0.1 } }
+            },
+            "retina_detect": true
+        });
+    });
+</script>
 {% endblock %}

@@ -1,0 +1,691 @@
+{% extends 'gymapp/base.html' %}
+{% load static %}
+{% block title %}Choose Workout Type | FitNation{% endblock %}
+{% block content %}
+<style>
+    /* Premium space-dark amethyst theme matching select-plans */
+    :root {
+        --color-obsidian: #05020c;
+        --color-amethyst-dark: #120724;
+        --color-amethyst-light: #2c144e;
+        --color-accent-purple: #a78bfa;
+        --color-accent-pink: #f472b6;
+    }
+
+    #particles-js {
+        display: none !important;
+    }
+
+    body {
+        background: radial-gradient(circle at 50% 50%, var(--color-amethyst-dark) 0%, var(--color-obsidian) 100%) !important;
+        color: #f3f4f6;
+        font-family: 'Poppins', sans-serif;
+        min-height: 100vh;
+    }
+
+    .choose-page-wrapper {
+        padding: 5rem 1rem;
+        position: relative;
+        z-index: 5;
+    }
+
+    .choose-header h1 {
+        font-size: clamp(2rem, 5vw, 3rem);
+        font-weight: 900;
+        text-transform: uppercase;
+        letter-spacing: 1.5px;
+        background: linear-gradient(135deg, #a78bfa 0%, #f472b6 100%);
+        -webkit-background-clip: text;
+        background-clip: text;
+        -webkit-text-fill-color: transparent;
+        margin-bottom: 1rem;
+    }
+
+    .choose-header p {
+        color: #a0aec0;
+        max-width: 600px;
+        margin: 0 auto 3.5rem auto;
+    }
+
+    .workout-type-card {
+        background: rgba(20, 16, 32, 0.75);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        border-radius: 24px;
+        padding: 3rem 2.25rem;
+        cursor: pointer;
+        text-align: center;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        position: relative;
+    }
+
+    .workout-type-card:hover {
+        transform: translateY(-8px);
+        border-color: rgba(167, 139, 250, 0.35);
+        box-shadow: 0 15px 35px rgba(167, 139, 250, 0.12);
+    }
+
+    .workout-type-card.active {
+        background: rgba(35, 20, 50, 0.85);
+        border: 2px solid var(--color-accent-purple);
+        box-shadow: 0 0 30px rgba(167, 139, 250, 0.3);
+    }
+
+    .workout-type-card .card-icon {
+        font-size: 3.5rem;
+        color: var(--color-accent-purple);
+        margin-bottom: 1.5rem;
+        transition: all 0.3s ease;
+    }
+
+    .workout-type-card.active .card-icon {
+        color: var(--color-accent-pink);
+        transform: scale(1.15);
+    }
+
+    .workout-type-card .card-title {
+        font-weight: 850;
+        font-size: 1.35rem;
+        color: #fff;
+        margin-bottom: 0.75rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .workout-type-card .card-desc {
+        font-size: 0.92rem;
+        color: #a0aec0;
+        line-height: 1.45;
+        margin-bottom: 0;
+    }
+
+    /* Checkbox overlay mark */
+    .checkbox-badge {
+        position: absolute;
+        top: 20px;
+        right: 20px;
+        width: 24px;
+        height: 24px;
+        border-radius: 50%;
+        border: 2px solid rgba(255, 255, 255, 0.15);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: transparent;
+        font-size: 0.75rem;
+        transition: all 0.3s ease;
+    }
+
+    .workout-type-card.active .checkbox-badge {
+        background: var(--color-accent-purple);
+        border-color: var(--color-accent-purple);
+        color: #05020c;
+    }
+
+    /* Buttons */
+    .btn-plan {
+        padding: 15px 35px;
+        border-radius: 16px;
+        font-weight: 800;
+        font-size: 1.05rem;
+        text-transform: uppercase;
+        letter-spacing: 1.25px;
+        transition: all 0.3s ease;
+        border: none;
+        box-shadow: 0 4px 15px rgba(139, 92, 246, 0.35);
+        cursor: pointer;
+    }
+
+    .btn-premium {
+        background: linear-gradient(135deg, #a78bfa 0%, #7c3aed 100%);
+        color: #ffffff;
+    }
+
+    .btn-premium:hover:not(:disabled) {
+        background: linear-gradient(135deg, #c084fc 0%, #8b5cf6 100%);
+        box-shadow: 0 8px 25px rgba(167, 139, 250, 0.55);
+        transform: translateY(-2px);
+    }
+
+    .btn-premium:disabled {
+        background: rgba(167, 139, 250, 0.15);
+        color: rgba(255, 255, 255, 0.3);
+        box-shadow: none;
+        cursor: not-allowed;
+    }
+
+    /* Loading Section */
+    .loading-spinner {
+        width: 60px;
+        height: 60px;
+        border: 5px solid rgba(167, 139, 250, 0.12);
+        border-top: 5px solid var(--color-accent-purple);
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+        display: inline-block;
+    }
+
+    @keyframes spin {
+        0% {
+            transform: rotate(0deg);
+        }
+
+        100% {
+            transform: rotate(360deg);
+        }
+    }
+
+    .plan-generating-title {
+        font-weight: 850;
+        font-size: 1.5rem;
+        text-transform: uppercase;
+        color: #fff;
+    }
+
+    .plan-generating-subtitle {
+        font-size: 1.05rem;
+        color: #a0aec0 !important;
+        min-height: 25px;
+    }
+
+    /* Plan Output Result Styles */
+    .plan-results-section {
+        margin-top: 4rem;
+        text-align: left;
+    }
+
+    .section-category-header {
+        border-bottom: 2px solid rgba(167, 139, 250, 0.2);
+        padding-bottom: 0.75rem;
+        margin-top: 3.5rem;
+        margin-bottom: 2rem;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+
+    .section-category-header h2 {
+        font-weight: 850;
+        font-size: 1.75rem;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        color: #fff;
+        margin: 0;
+    }
+
+    .section-category-header i {
+        color: var(--color-accent-purple);
+        font-size: 1.8rem;
+    }
+
+    .day-tab-title {
+        font-weight: 800;
+        font-size: 1.2rem;
+        text-transform: uppercase;
+        color: var(--color-accent-pink);
+        margin-bottom: 1.25rem;
+        letter-spacing: 0.5px;
+        border-left: 3px solid var(--color-accent-pink);
+        padding-left: 10px;
+    }
+
+    .exercise-grid-card {
+        background: rgba(255, 255, 255, 0.03);
+        border: 1px solid rgba(255, 255, 255, 0.06);
+        border-radius: 20px;
+        padding: 2rem;
+        height: 100%;
+        transition: all 0.3s ease;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+    }
+
+    .exercise-grid-card:hover {
+        background: rgba(255, 255, 255, 0.05);
+        border-color: rgba(167, 139, 250, 0.2);
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+    }
+
+    .ex-info-block {
+        margin-bottom: 1rem;
+    }
+
+    .ex-title {
+        font-weight: 800;
+        font-size: 1.15rem;
+        color: #fff;
+        margin-bottom: 0.5rem;
+        text-transform: uppercase;
+    }
+
+    .ex-metric-badge {
+        background: rgba(167, 139, 250, 0.1);
+        border: 1px solid rgba(167, 139, 250, 0.2);
+        color: var(--color-accent-purple);
+        font-size: 0.82rem;
+        font-weight: 700;
+        padding: 4px 12px;
+        border-radius: 50px;
+        display: inline-block;
+        margin-bottom: 0.75rem;
+    }
+
+    .video-embed-box iframe {
+        width: 100%;
+        aspect-ratio: 16/9;
+        border-radius: 12px;
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.5);
+    }
+
+    .video-error-box {
+        aspect-ratio: 16/9;
+        background: rgba(0, 0, 0, 0.25);
+        border-radius: 12px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        color: #718096;
+        font-size: 0.9rem;
+    }
+
+    /* Diet Plan Card UI */
+    .diet-plan-layout {
+        background: rgba(20, 16, 32, 0.65);
+        border: 1px solid rgba(167, 139, 250, 0.15);
+        border-radius: 28px;
+        padding: 3rem;
+    }
+
+    .diet-meal-card {
+        background: rgba(255, 255, 255, 0.02);
+        border-left: 4px solid var(--color-accent-purple);
+        border-radius: 0 16px 16px 0;
+        padding: 1.5rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .diet-meal-card h4 {
+        font-weight: 800;
+        font-size: 1rem;
+        color: var(--color-accent-purple);
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        margin-bottom: 0.5rem;
+    }
+
+    .diet-meal-card p {
+        color: #e2e8f0;
+        margin: 0;
+        font-size: 0.95rem;
+    }
+
+    .diet-stat-badge {
+        background: rgba(244, 114, 182, 0.08);
+        border: 1.5px solid rgba(244, 114, 182, 0.25);
+        color: var(--color-accent-pink);
+        padding: 1rem 1.5rem;
+        border-radius: 18px;
+        text-align: center;
+        height: 100%;
+    }
+
+    .diet-stat-badge .stat-label {
+        font-size: 0.78rem;
+        font-weight: 800;
+        text-transform: uppercase;
+        color: #a0aec0;
+        letter-spacing: 0.75px;
+        margin-bottom: 0.35rem;
+    }
+
+    .diet-stat-badge .stat-value {
+        font-size: 1.4rem;
+        font-weight: 900;
+    }
+</style>
+
+<div class="container choose-page-wrapper">
+    <!-- Header -->
+    <div class="choose-header text-center" data-aos="fade-down">
+        <h1>Choose Your Workout Type</h1>
+        <p>Customize your AI generation parameters. Select one, two, or all workout forms to construct your system path.
+        </p>
+    </div>
+
+    <!-- Workout Type Cards Grid -->
+    <div class="row g-4 justify-content-center mb-5" data-aos="fade-up" data-aos-delay="200">
+        <!-- Weight Training -->
+        <div class="col-lg-4 col-md-6">
+            <div class="workout-type-card" id="card-weight_training" onclick="toggleSelection('weight_training')">
+                <input type="checkbox" id="check-weight_training" class="d-none" value="weight_training">
+                <div class="checkbox-badge"><i class="fa-solid fa-check"></i></div>
+                <div class="card-icon"><i class="fa-solid fa-dumbbell"></i></div>
+                <h4 class="card-title">Weight Training</h4>
+                <p class="card-desc">Strengthen, tone, and build lean muscle with custom resistance drills.</p>
+            </div>
+        </div>
+
+        <!-- Cardio -->
+        <div class="col-lg-4 col-md-6">
+            <div class="workout-type-card" id="card-cardio" onclick="toggleSelection('cardio')">
+                <input type="checkbox" id="check-cardio" class="d-none" value="cardio">
+                <div class="checkbox-badge"><i class="fa-solid fa-check"></i></div>
+                <div class="card-icon"><i class="fa-solid fa-person-running"></i></div>
+                <h4 class="card-title">Cardio</h4>
+                <p class="card-desc">Improve cardiovascular speed, endurance, and burn calories efficiently.</p>
+            </div>
+        </div>
+
+        <!-- Yoga -->
+        <div class="col-lg-4 col-md-6">
+            <div class="workout-type-card" id="card-yoga" onclick="toggleSelection('yoga')">
+                <input type="checkbox" id="check-yoga" class="d-none" value="yoga">
+                <div class="checkbox-badge"><i class="fa-solid fa-check"></i></div>
+                <div class="card-icon"><i class="fa-solid fa-spa"></i></div>
+                <h4 class="card-title">Yoga</h4>
+                <p class="card-desc">Restore flexibility, core stance balance, and meditative stamina.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Submit Button Section -->
+    <div class="text-center mb-5" data-aos="fade-up" data-aos-delay="300">
+        <button class="btn-plan btn-premium w-50 py-3" id="btnGeneratePlan" onclick="submitWorkoutConfig()">Generate My
+            Plan</button>
+    </div>
+
+    <!-- Loading Animation View -->
+    <div id="loaderSection" class="text-center d-none py-5 my-5">
+        <div class="loading-spinner mb-4"></div>
+        <h3 class="plan-generating-title mb-2">Generating Fitness Blueprint</h3>
+        <p id="loaderSubtitle" class="plan-generating-subtitle">Warming up artificial intelligence engine...</p>
+    </div>
+
+    <!-- Generated Plan Output Container -->
+    <div id="planResultContainer" class="plan-results-section d-none">
+
+    </div>
+</div>
+
+<script>
+    // Hidden profile_id injected from django context
+    const profileId = "{{ profile_id }}";
+
+    function toggleSelection(cat) {
+        const checkbox = document.getElementById("check-" + cat);
+        const card = document.getElementById("card-" + cat);
+
+        checkbox.checked = !checkbox.checked;
+        if (checkbox.checked) {
+            card.classList.add("active");
+        } else {
+            card.classList.remove("active");
+        }
+    }
+
+    const messages = [
+        "Analyzing physical stats & objectives...",
+        "Calling Google Gemini AI parameters...",
+        "Drafting nutrition ratios & daily calorie caps...",
+        "Querying YouTube Data API for proper execution form...",
+        "Fusing program guidelines and demonstration links...",
+        "Finishing custom blueprint packaging..."
+    ];
+    let messageIdx = 0;
+    let messageInterval;
+
+    function startLoaderText() {
+        messageIdx = 0;
+        document.getElementById("loaderSubtitle").innerText = messages[messageIdx];
+        messageInterval = setInterval(() => {
+            messageIdx = (messageIdx + 1) % messages.length;
+            document.getElementById("loaderSubtitle").innerText = messages[messageIdx];
+        }, 2500);
+    }
+
+    function stopLoaderText() {
+        clearInterval(messageInterval);
+    }
+
+    function submitWorkoutConfig() {
+        const categories = [];
+        ['weight_training', 'cardio', 'yoga'].forEach(cat => {
+            if (document.getElementById("check-" + cat).checked) {
+                categories.push(cat);
+            }
+        });
+
+        if (categories.length === 0) {
+            alert("Please select at least one workout category.");
+            return;
+        }
+
+        // Disable elements & Show loader
+        document.getElementById("btnGeneratePlan").disabled = true;
+        document.getElementById("loaderSection").classList.remove("d-none");
+        document.getElementById("planResultContainer").classList.add("d-none");
+
+        // Scroll to loader
+        document.getElementById("loaderSection").scrollIntoView({ behavior: 'smooth' });
+        startLoaderText();
+
+        const payload = {
+            profile_id: parseInt(profileId),
+            categories: categories
+        };
+
+        fetch("{% url 'api_generate_plan' %}", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "X-CSRFToken": "{{ csrf_token }}"
+            },
+            body: JSON.stringify(payload)
+        })
+            .then(res => {
+                if (!res.ok) {
+                    throw new Error("Unable to build recipe logs: " + res.statusText);
+                }
+                return res.json();
+            })
+            .then(data => {
+                renderPlan(data);
+            })
+            .catch(err => {
+                console.error(err);
+                alert("Error constructing fitness schedules: " + err.message);
+            })
+            .finally(() => {
+                document.getElementById("btnGeneratePlan").disabled = false;
+                document.getElementById("loaderSection").classList.add("d-none");
+                stopLoaderText();
+            });
+    }
+
+    function renderPlan(data) {
+        const container = document.getElementById("planResultContainer");
+        container.innerHTML = ""; // Clear existing
+
+        let hasData = false;
+
+        // Collect days
+        const days = ["day1", "day2", "day3"];
+        let workoutHtml = "";
+
+        days.forEach(day => {
+            // Check if there's any exercise for this day in any active category
+            let dayExercises = [];
+
+            // Weight Training first
+            if (data.weight_training && data.weight_training[day]) {
+                data.weight_training[day].forEach(ex => {
+                    dayExercises.push({ ...ex, category: "weight_training" });
+                });
+            }
+            // Cardio second
+            if (data.cardio && data.cardio[day]) {
+                data.cardio[day].forEach(ex => {
+                    dayExercises.push({ ...ex, category: "cardio" });
+                });
+            }
+            // Yoga third
+            if (data.yoga && data.yoga[day]) {
+                data.yoga[day].forEach(ex => {
+                    dayExercises.push({ ...ex, category: "yoga" });
+                });
+            }
+
+            if (dayExercises.length > 0) {
+                hasData = true;
+                workoutHtml += `
+                <div class="day-workout-section mt-5 border-top border-purple pt-4">
+                    <div class="section-category-header mb-4" style="background: rgba(167, 139, 250, 0.05); border-left: 5px solid var(--color-accent-purple); padding: 15px 20px; border-radius: 8px;">
+                        <h2 class="text-uppercase m-0" style="font-size: 1.6rem; font-weight: 800; letter-spacing: 1px; color: var(--color-text-white);">
+                            <i class="fa-solid fa-calendar-day me-2" style="color: var(--color-accent-purple);"></i> ${day.replace("day", "Day ")} Unified Schedule
+                        </h2>
+                        <span class="text-secondary small fw-bold uppercase">Mixed and sequenced routine for maximum athletic efficiency</span>
+                    </div>
+                    <div class="row g-4">
+                `;
+
+                dayExercises.forEach(ex => {
+                    // Category badge styling
+                    let catPill = "";
+                    let metricsHtml = "";
+
+                    if (ex.category === "weight_training") {
+                        catPill = `<span class="badge mb-2 px-3 py-2 text-uppercase" style="background: rgba(167, 139, 250, 0.2); color: var(--color-accent-purple); font-size: 0.7rem; font-weight: 800; border-radius: 30px; letter-spacing: 0.5px;">Weight Training</span>`;
+                        const videoDuration = (ex.video && ex.video.duration) ? ex.video.duration : "5 mins";
+                        metricsHtml = `
+                            <div class="ex-metric-badge mb-2"><i class="fa-solid fa-bullseye me-1"></i> Prescribed Routine: Sets: ${ex.sets} | Reps: ${ex.reps} | Rest: ${ex.rest}</div>
+                            <div class="ex-metric-badge"><i class="fa-solid fa-clock me-1"></i> Target Duration: ${videoDuration}</div>
+                        `;
+                    } else if (ex.category === "cardio") {
+                        catPill = `<span class="badge mb-2 px-3 py-2 text-uppercase" style="background: rgba(244, 63, 94, 0.2); color: #f43f5e; font-size: 0.7rem; font-weight: 800; border-radius: 30px; letter-spacing: 0.5px;">Cardio</span>`;
+                        const targetDuration = (ex.video && ex.video.duration) ? ex.video.duration : (ex.duration || "5 mins");
+                        metricsHtml = `
+                            <div class="ex-metric-badge"><i class="fa-solid fa-clock me-1"></i> Target Duration: ${targetDuration}</div>
+                        `;
+                    } else if (ex.category === "yoga") {
+                        catPill = `<span class="badge mb-2 px-3 py-2 text-uppercase" style="background: rgba(20, 184, 166, 0.2); color: #14b8a6; font-size: 0.7rem; font-weight: 800; border-radius: 30px; letter-spacing: 0.5px;">Yoga & Recovery</span>`;
+                        const targetDuration = (ex.video && ex.video.duration) ? ex.video.duration : (ex.duration || "10 mins");
+                        metricsHtml = `
+                            <div class="ex-metric-badge"><i class="fa-solid fa-clock me-1"></i> Target Duration: ${targetDuration}</div>
+                        `;
+                    }
+
+                    const videoMark = ex.video ? `
+                        <div class="text-secondary small fw-bold mb-2 uppercase tracking-wide" style="font-size: 0.72rem; letter-spacing: 0.5px; opacity: 0.85;">
+                            <i class="fa-solid fa-circle-play me-1" style="color: var(--color-accent-purple);"></i> Technique Demonstration Video:
+                        </div>
+                        <div class="video-embed-box">
+                            <iframe src="${ex.video.embed_url}&origin=${window.location.origin}" title="${ex.exercise} Form" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+                        </div>
+                        <div class="mt-3">
+                            <a href="https://www.youtube.com/watch?v=${ex.video.video_id}" 
+                               target="_blank" 
+                               class="btn btn-sm w-100" 
+                               style="background: linear-gradient(135deg, #ff0000 0%, #cc0000 100%); color: #ffffff; border: none; border-radius: 12px; font-weight: 800; font-size: 0.85rem; padding: 12px; transition: all 0.2s ease; display: inline-flex; align-items: center; justify-content: center; gap: 8px; text-decoration: none; box-shadow: 0 4px 15px rgba(255, 0, 0, 0.25);"
+                               onmouseover="this.style.boxShadow='0 6px 20px rgba(255, 0, 0, 0.45)'; this.style.transform='translateY(-1px)';"
+                               onmouseout="this.style.boxShadow='0 4px 15px rgba(255, 0, 0, 0.25)'; this.style.transform='translateY(0)';"
+                               title="If the video below shows Error 153, click this button to open it directly in a new tab">
+                                <i class="fa-brands fa-youtube" style="font-size: 1.1rem;"></i> Open Video in YouTube App / Tab
+                            </a>
+                        </div>
+                    ` : `
+                        <div class="video-error-box">
+                            <i class="fa-solid fa-cloud-bolt mb-2"></i>
+                            <span>No video tutorial available</span>
+                        </div>
+                    `;
+
+                    workoutHtml += `
+                    <div class="col-md-6 mb-4">
+                        <div class="exercise-grid-card h-100 d-flex flex-column justify-content-between" style="border: 1px solid rgba(167, 139, 250, 0.15); border-radius: 16px; background: rgba(30, 27, 75, 0.25); padding: 20px; transition: all 0.3s ease;">
+                            <div>
+                                ${catPill}
+                                <h4 class="ex-title" style="color: var(--color-text-white); font-weight: 700; font-size: 1.2rem; margin-bottom: 12px;">${ex.exercise}</h4>
+                                <div class="ex-metrics-list mb-3">
+                                    ${metricsHtml}
+                                </div>
+                            </div>
+                            <div class="mt-auto">
+                                ${videoMark}
+                            </div>
+                        </div>
+                    </div>
+                    `;
+                });
+
+                workoutHtml += `
+                    </div>
+                </div>
+                `;
+            }
+        });
+
+        if (workoutHtml) {
+            container.innerHTML += workoutHtml;
+        }
+
+        // Render Diet Plan
+        if (data.diet_plan) {
+            hasData = true;
+            const diet = data.diet_plan;
+            const dietHtml = `
+            <div class="section-category-header mt-5">
+                <i class="fa-solid fa-utensils"></i>
+                <h2>Personalized Indian Diet Blueprint</h2>
+            </div>
+            <div class="diet-plan-layout">
+                <div class="row">
+                    <div class="col-lg-8">
+                        <div class="diet-meal-card" style="background: rgba(30, 27, 75, 0.25); border: 1px solid rgba(167, 139, 250, 0.15); border-radius: 12px; padding: 20px; margin-bottom: 15px;">
+                            <h4 style="color: var(--color-accent-purple); font-weight: 700; font-size: 1.1rem; margin-bottom: 8px;"><i class="fa-solid fa-mug-saucer me-2" style="color: #fbbf24;"></i> Breakfast</h4>
+                            <p class="meal-desc" style="color: var(--color-text-hover); margin: 0; line-height: 1.6; font-size: 0.95rem;">${diet.breakfast}</p>
+                        </div>
+                        <div class="diet-meal-card" style="background: rgba(30, 27, 75, 0.25); border: 1px solid rgba(167, 139, 250, 0.15); border-radius: 12px; padding: 20px; margin-bottom: 15px;">
+                            <h4 style="color: var(--color-accent-purple); font-weight: 700; font-size: 1.1rem; margin-bottom: 8px;"><i class="fa-solid fa-bowl-rice me-2" style="color: #34d399;"></i> Lunch</h4>
+                            <p class="meal-desc" style="color: var(--color-text-hover); margin: 0; line-height: 1.6; font-size: 0.95rem;">${diet.lunch}</p>
+                        </div>
+                        <div class="diet-meal-card" style="background: rgba(30, 27, 75, 0.25); border: 1px solid rgba(167, 139, 250, 0.15); border-radius: 12px; padding: 20px; margin-bottom: 15px;">
+                            <h4 style="color: var(--color-accent-purple); font-weight: 700; font-size: 1.1rem; margin-bottom: 8px;"><i class="fa-solid fa-moon me-2" style="color: #60a5fa;"></i> Dinner</h4>
+                            <p class="meal-desc" style="color: var(--color-text-hover); margin: 0; line-height: 1.6; font-size: 0.95rem;">${diet.dinner}</p>
+                        </div>
+                        <div class="diet-meal-card" style="background: rgba(30, 27, 75, 0.25); border: 1px solid rgba(167, 139, 250, 0.15); border-radius: 12px; padding: 20px; margin-bottom: 15px;">
+                            <h4 style="color: var(--color-accent-purple); font-weight: 700; font-size: 1.1rem; margin-bottom: 8px;"><i class="fa-solid fa-apple-whole me-2" style="color: #f87171;"></i> Snacks & Hydration</h4>
+                            <p class="meal-desc" style="color: var(--color-text-hover); margin: 0; line-height: 1.6; font-size: 0.95rem;">${diet.snacks}</p>
+                        </div>
+                    </div>
+                    <div class="col-lg-4 d-flex flex-column gap-3 justify-content-center">
+                        <div class="diet-stat-badge" style="border: 1px solid rgba(167, 139, 250, 0.15); border-radius: 16px; background: rgba(30, 27, 75, 0.25); padding: 20px; text-align: center;">
+                            <div class="stat-label" style="color: var(--color-text-muted); font-size: 0.85rem; text-uppercase font-weight: 700; letter-spacing: 0.5px; margin-bottom: 5px;">Daily Calories Limit</div>
+                            <div class="stat-value" style="color: var(--color-text-white); font-size: 1.8rem; font-weight: 800; text-shadow: 0 0 10px rgba(167, 139, 250, 0.25);">${diet.daily_calories}</div>
+                        </div>
+                        <div class="diet-stat-badge" style="border: 1px solid rgba(167, 139, 250, 0.25); border-radius: 16px; background: rgba(30, 27, 75, 0.25); padding: 20px; text-align: center; color: var(--color-accent-purple);">
+                            <div class="stat-label" style="color: var(--color-text-muted); font-size: 0.85rem; text-uppercase font-weight: 700; letter-spacing: 0.5px; margin-bottom: 5px;">Recommended Water Intake</div>
+                            <div class="stat-value" style="font-size: 1.8rem; font-weight: 800; text-shadow: 0 0 10px rgba(167, 139, 250, 0.25);">${diet.water_intake}</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            `;
+            container.innerHTML += dietHtml;
+        }
+
+        if (hasData) {
+            container.classList.remove("d-none");
+            container.scrollIntoView({ behavior: 'smooth' });
+        } else {
+            alert("No data returned for selected categories. Try checking your API attributes.");
+        }
+    }
+</script>
+{% endblock %}

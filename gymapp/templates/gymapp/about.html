@@ -1,7 +1,295 @@
 {% extends 'gymapp/base.html' %}
-{% block title %}About | Gym{% endblock %}
+{% block title %}About Us | FitNation{% endblock %}
 {% block content %}
-<h1>About us</h1>
-<p>We are passionate towards Fitness</p>
-{% endblock %}
+<style>
+    :root {
+        --neon-cyan: #00f2fe;
+        --neon-blue: #4facfe;
+        --neon-magenta: #ff3366;
+        --neon-yellow: #ffd600;
+        --dark-bg: #070a13;
+        --card-bg: rgba(15, 23, 42, 0.75);
+        --glass-border: rgba(255, 255, 255, 0.08);
+        --text-main: #f8fafc;
+        --text-muted: #94a3b8;
+    }
 
+    body {
+        background: linear-gradient(rgba(7, 10, 19, 0.85), rgba(7, 10, 19, 0.98)),
+            url('https://images.unsplash.com/photo-1517838277536-f5f99be501cd?q=80&w=1470&auto=format&fit=crop') no-repeat center center/cover !important;
+        color: var(--text-main);
+        font-family: 'Poppins', sans-serif;
+        min-height: 100vh;
+        overflow-y: auto;
+    }
+
+    .section-title {
+        font-weight: 800;
+        letter-spacing: 1px;
+        background: linear-gradient(135deg, #ffffff 0%, #a1a1a1 100%);
+        -webkit-background-clip: text;
+        background-clip: text;
+        -webkit-text-fill-color: transparent;
+        text-transform: uppercase;
+        font-size: 2.5rem;
+    }
+
+    .section-subtitle {
+        color: var(--text-muted);
+        font-size: 1.1rem;
+        max-width: 700px;
+        margin: 0 auto;
+    }
+
+    .about-card {
+        background: var(--card-bg);
+        border: 1px solid var(--glass-border);
+        padding: 3rem 2.5rem;
+        border-radius: 20px;
+        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.35);
+        backdrop-filter: blur(15px);
+        -webkit-backdrop-filter: blur(15px);
+        transition: all 0.3s ease;
+    }
+
+    .about-card:hover {
+        border-color: rgba(0, 242, 254, 0.25);
+        box-shadow: 0 15px 40px rgba(0, 242, 254, 0.1);
+    }
+
+    .feature-pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 15px;
+        background: rgba(255, 255, 255, 0.02);
+        border: 1px solid var(--glass-border);
+        border-radius: 15px;
+        padding: 1.5rem;
+        transition: all 0.3s ease;
+        height: 100%;
+    }
+
+    .feature-pill:hover {
+        transform: translateY(-5px);
+        border-color: rgba(255, 255, 255, 0.15);
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.25);
+    }
+
+    .feature-icon {
+        font-size: 1.8rem;
+        width: 60px;
+        height: 60px;
+        border-radius: 16px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: rgba(255, 255, 255, 0.03);
+        border: 1px solid rgba(255, 255, 255, 0.05);
+        flex-shrink: 0;
+    }
+
+    .text-cyan {
+        color: var(--neon-cyan);
+        box-shadow: inset 0 0 20px rgba(0, 242, 254, 0.08);
+    }
+
+    .text-magenta {
+        color: var(--neon-magenta);
+        box-shadow: inset 0 0 20px rgba(255, 51, 102, 0.08);
+    }
+
+    .text-yellow {
+        color: var(--neon-yellow);
+        box-shadow: inset 0 0 20px rgba(255, 214, 0, 0.08);
+    }
+
+    .text-blue {
+        color: var(--neon-blue);
+        box-shadow: inset 0 0 20px rgba(79, 172, 254, 0.08);
+    }
+
+    .feature-content h4 {
+        font-size: 1.1rem;
+        font-weight: 700;
+        color: #fff;
+        margin-bottom: 0.5rem;
+    }
+
+    .feature-content p {
+        font-size: 0.88rem;
+        color: var(--text-muted);
+        margin: 0;
+        line-height: 1.5;
+    }
+
+    .stat-number {
+        font-size: 2.5rem;
+        font-weight: 800;
+        background: linear-gradient(135deg, var(--neon-cyan) 0%, var(--neon-blue) 100%);
+        -webkit-background-clip: text;
+        background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+
+    .stat-label {
+        text-transform: uppercase;
+        font-size: 0.78rem;
+        color: var(--text-muted);
+        font-weight: 700;
+        letter-spacing: 1px;
+    }
+
+    .btn-action-neon {
+        background: linear-gradient(135deg, var(--neon-cyan) 0%, var(--neon-blue) 100%);
+        color: #05080e;
+        font-weight: 700;
+        letter-spacing: 1px;
+        text-transform: uppercase;
+        padding: 14px 28px;
+        border: none;
+        border-radius: 12px;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 15px rgba(0, 242, 254, 0.25);
+        text-decoration: none;
+        display: inline-block;
+    }
+
+    .btn-action-neon:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 22px rgba(0, 242, 254, 0.5);
+        color: #05080e;
+    }
+
+    .btn-outline-neon {
+        border: 1px solid var(--glass-border);
+        color: #fff;
+        font-weight: 600;
+        letter-spacing: 1px;
+        text-transform: uppercase;
+        padding: 14px 28px;
+        border-radius: 12px;
+        transition: all 0.3s ease;
+        text-decoration: none;
+        display: inline-block;
+        background: rgba(255, 255, 255, 0.01);
+    }
+
+    .btn-outline-neon:hover {
+        background: rgba(255, 255, 255, 0.05);
+        border-color: #fff;
+        color: #fff;
+    }
+</style>
+
+<div class="container py-5 my-4">
+    <!-- Header -->
+    <div class="text-center mb-5">
+        <h2 class="section-title mb-3">Redefine Your Limits</h2>
+        <p class="section-subtitle">Empowering your health journey with high-performance AI engines, localized nutrition
+            curation, and video tutorials.</p>
+    </div>
+
+    <div class="row g-5">
+        <!-- Story Card -->
+        <div class="col-lg-12">
+            <div class="about-card mb-5">
+                <div class="row align-items-center g-4">
+                    <div class="col-lg-8">
+                        <h3 style="font-weight: 800; color: #fff;" class="mb-3">Our Vision & Core Mission</h3>
+                        <p style="color: var(--text-muted); line-height: 1.8; font-size: 1.05rem;">
+                            FitNation was born with a clear vision: to merge state-of-the-art software technology with
+                            physical fitness sciences. Too often, workout routines are generic, diet recommendations are
+                            prohibitively expensive or Westernized, and video instructions are hard to search.
+                        </p>
+                        <p style="color: var(--text-muted); line-height: 1.8; font-size: 1.05rem;">
+                            We tackle these problems head-on by generating completely customized 3-day split training
+                            regimes (Weight Training, Cardio, and Yoga) tailored to your environment and gym goals,
+                            coupled with budget-conscious, protein-rich Indian diet blueprints matched to your target
+                            calories.
+                        </p>
+                    </div>
+                    <div class="col-lg-4 text-center">
+                        <div class="d-flex flex-column gap-4 justify-content-center align-items-center">
+                            <div>
+                                <div class="stat-number">100%</div>
+                                <div class="stat-label">AI-Optimized Plans</div>
+                            </div>
+                            <div>
+                                <div class="stat-number">FREE</div>
+                                <div class="stat-label">No Premium Paywalls</div>
+                            </div>
+                            <div>
+                                <div class="stat-number">30+</div>
+                                <div class="stat-label">Guided Exercises</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Features Section Grid -->
+        <div class="col-lg-12">
+            <h3 style="font-weight: 800; color: #fff; text-align: center;" class="mb-5">Engine Features Built For You
+            </h3>
+            <div class="row g-4">
+                <!-- Feature 1 -->
+                <div class="col-md-6 col-lg-3">
+                    <div class="feature-pill">
+                        <div class="feature-icon text-cyan"><i class="fa-solid fa-brain"></i></div>
+                        <div class="feature-content">
+                            <h4>State-Of-The-Art AI</h4>
+                            <p>Uses Groq Llama models to analyze user height, weight, gender, and experience to
+                                structure custom schedules.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Feature 2 -->
+                <div class="col-md-6 col-lg-3">
+                    <div class="feature-pill">
+                        <div class="feature-icon text-magenta"><i class="fa-solid fa-utensils"></i></div>
+                        <div class="feature-content">
+                            <h4>Indian Diet Blueprint</h4>
+                            <p>Budget-friendly meal options (paneer, chana, dal, roti) including exact ingestion times
+                                [HH:MM:SS].</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Feature 3 -->
+                <div class="col-md-6 col-lg-3">
+                    <div class="feature-pill">
+                        <div class="feature-icon text-yellow"><i class="fa-brands fa-youtube"></i></div>
+                        <div class="feature-content">
+                            <h4>Technique Demonstrations</h4>
+                            <p>Embeds public tutorials matched with true duration parsed dynamically from YouTube
+                                details.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Feature 4 -->
+                <div class="col-md-6 col-lg-3">
+                    <div class="feature-pill">
+                        <div class="feature-icon text-blue"><i class="fa-solid fa-heart-pulse"></i></div>
+                        <div class="feature-content">
+                            <h4>Multi-Discipline Split</h4>
+                            <p>Mixes Cardio, Yoga, and Strength Training into a unified daily sequence to maximize
+                                productivity.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Actions -->
+        <div class="col-lg-12 text-center mt-5">
+            <div class="d-flex justify-content-center gap-3 flex-wrap">
+                <a href="{% url 'register_member' %}" class="btn-action-neon">Build Your Plan Now</a>
+                <a href="{% url 'contact' %}" class="btn-outline-neon">Get Support</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

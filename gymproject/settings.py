@@ -26,7 +26,7 @@ SECRET_KEY = 'django-insecure-2pgm+i%ei!9ixgdhxkor!*w*n9&n@b@tq7=z!3(%+h9fcrn88#
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -117,7 +117,13 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
 
-STATIC_URL = 'static/'
+STATIC_URL = '/static/'
+
+STATICFILES_DIRS=[
+    BASE_DIR / "gymapp" / "static", 
+]
+MEDIA_URL= '/media/'
+MEDIA_ROOT=os.path.join(BASE_DIR,'media')
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
@@ -125,11 +131,29 @@ STATIC_URL = 'static/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 LOGIN_URL= '/login/'
 LOGIN_REDIRECT_URL = '/'
-EMAIL_BACKEND= 'django.core.mail.backends.smtp.EmailBackend'
+
+# Load environment variables from .env file if it exists
+env_path = BASE_DIR / '.env'
+if env_path.exists():
+    with open(env_path, 'r', encoding='utf-8') as f:
+        for line in f:
+            line = line.strip()
+            if line and not line.startswith('#'):
+                parts = line.split('=', 1)
+                if len(parts) == 2:
+                    os.environ[parts[0].strip()] = parts[1].strip()
+
+# For local testing, email sends to the terminal console:
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+# EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST ='smtp.gmail.com'
 EMAIL_PORT =465
 EMAIL_USE_TLS =False
 EMAIL_USE_SSL=True
 EMAIL_HOST_USER = 'hassu003.lko@gmail.com'
-EMAIL_HOST_PASSWORD= 'lxgnyrkelgcivxwi'
+EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD')
 DEFAULT_FROM_EMAIL = 'Fitnation<hassu003.lko@gmail.com>'
+
+# API Keys for AI Recommendation System
+GROQ_API_KEY = os.getenv('GROQ_API_KEY')   # Get your free key at: https://console.groq.com/keys
+YOUTUBE_API_KEY = os.getenv('YOUTUBE_API_KEY')

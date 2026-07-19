@@ -1,0 +1,20 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Node.js
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Executables
+*.exe
+tailwindcss.exe
+
+# Temporary files created by helper scripts
+git_status*
+project_status.txt
+print_git_status.py
+status_utf8.txt
