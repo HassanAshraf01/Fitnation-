@@ -1,0 +1,7 @@
+django
+groq==1.5.0
+requests
+gunicorn
+whitenoise
+dj-database-url
+psycopg2-binary
