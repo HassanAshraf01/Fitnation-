@@ -18,3 +18,12 @@ git_status*
 project_status.txt
 print_git_status.py
 status_utf8.txt
+all_remote_lines.txt
+
+# Databases and Local Configurations
+db.sqlite3
+*.sqlite3
+*.db
+.env
+.env.*
+

@@ -16,17 +16,27 @@ import os
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+# Load environment variables from .env file if it exists at the top
+env_path = BASE_DIR / '.env'
+if env_path.exists():
+    with open(env_path, 'r', encoding='utf-8') as f:
+        for line in f:
+            line = line.strip()
+            if line and not line.startswith('#'):
+                parts = line.split('=', 1)
+                if len(parts) == 2:
+                    os.environ[parts[0].strip()] = parts[1].strip()
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-2pgm+i%ei!9ixgdhxkor!*w*n9&n@b@tq7=z!3(%+h9fcrn88#'
+SECRET_KEY = os.getenv('SECRET_KEY', 'django-insecure-2pgm+i%ei!9ixgdhxkor!*w*n9&n@b@tq7=z!3(%+h9fcrn88#')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.getenv('DEBUG', 'True').lower() in ('true', '1', 't')
 
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = [host.strip() for host in os.getenv('ALLOWED_HOSTS', '*').split(',') if host.strip()]
 
 
 # Application definition
@@ -132,16 +142,6 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 LOGIN_URL= '/login/'
 LOGIN_REDIRECT_URL = '/'
 
-# Load environment variables from .env file if it exists
-env_path = BASE_DIR / '.env'
-if env_path.exists():
-    with open(env_path, 'r', encoding='utf-8') as f:
-        for line in f:
-            line = line.strip()
-            if line and not line.startswith('#'):
-                parts = line.split('=', 1)
-                if len(parts) == 2:
-                    os.environ[parts[0].strip()] = parts[1].strip()
 
 # For local testing, email sends to the terminal console:
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
