@@ -9,7 +9,7 @@ FitNation is a premium Gym Management Web Application built using **Django** and
 - **🧑‍💻 Interactive Dashboard**: Seamless navigation and custom profile-based navbar toggling based on user login states.
 - **🔐 Robust User Authentication**: Includes standard login, signup (with verification mails), profile management, and a complete secure password reset flow.
 - **✉️ Automated Notifications**: Seamless email confirmations and messages using Gmail SMTP server.
-- **🤖 Gemini AI Fitness Plans**: Personalized workout and fitness recommendations generated dynamically via the **Google Gemini API**.
+- **🤖 Groq AI Fitness Plans**: Personalized workout and fitness recommendations generated dynamically via the **Groq API** (Llama models).
 - **📺 YouTube Workout Guides**: Automated searching of video tutorials and workout guides powered by the **YouTube Data API v3**.
 - **📊 Admin Controls**: Complete admin suite to manage gym members, workouts, generated plans, and inquiries.
 - **🎨 Highly Responsive UI**: Beautiful dark-neon theme designed specifically with Tailwind CSS, custom grids, and interactive components.
@@ -22,7 +22,7 @@ FitNation is a premium Gym Management Web Application built using **Django** and
 - **Frontend:** HTML5, modern vanilla JavaScript, Tailwind CSS (supported by PostCSS)
 - **Database:** SQLite (Default Django representation)
 - **APIs and Services:**
-  - Google Gemini API (AI Fitness generation)
+  - Groq API v1.5.0 (AI Fitness generation via Llama models)
   - YouTube Data API v3 (Workout guidelines video query)
   - Gmail SMTP (Automated signup & system alerts)
 
@@ -35,7 +35,7 @@ gymproject/
 ├── gymapp/                       # Core Django Application
 │   ├── migrations/               # Database Migrations
 │   ├── services/                 # External API integrations
-│   │   ├── gemini_service.py     # Google Gemini API client
+│   │   ├── gemini_service.py     # Groq Llama API client
 │   │   └── youtube_service.py    # YouTube Data API client
 │   ├── static/                   # Static CSS, JavaScript, images, and videos
 │   ├── templates/gymapp/         # Elegant Tailwind HTML templates
@@ -68,7 +68,7 @@ cd gymproject
 ### 3. Install Dependencies
 Install Python libraries (or use virtual environment):
 ```bash
-pip install django google-generativeai requests
+pip install django groq==1.5.0 requests
 ```
 Install frontend development packages:
 ```bash
